@@ -63,8 +63,18 @@ export default function Testimonials() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const itemsPerView = 3; // Show 3 testimonials at a time on desktop
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const itemsPerView = isMobile ? 1 : 3; // Show 1 on mobile, 3 on desktop
   const totalSlides = Math.ceil(testimonials.length / itemsPerView);
 
   const nextSlide = () => {
@@ -163,7 +173,7 @@ export default function Testimonials() {
             {Array.from({ length: totalSlides }).map((_, slideIndex) => (
               <div
                 key={slideIndex}
-                className="min-w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-2"
+                className="min-w-full grid grid-cols-1 gap-8 px-2"
               >
                 {testimonials
                   .slice(slideIndex * itemsPerView, (slideIndex + 1) * itemsPerView)
